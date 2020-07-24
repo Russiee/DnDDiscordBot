@@ -1,8 +1,6 @@
 package com.discordbot.dnd;
 
 import com.discordbot.dnd.listeners.SummaryListener;
-import discord4j.core.DiscordClient;
-import discord4j.core.DiscordClientBuilder;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,7 @@ public class DnDDiscordBotApplication {
 		DiscordApiBuilder builder = new DiscordApiBuilder().setToken(token);
 		DiscordApi api = builder.login().join();
 		api.addListener(summaryListener);
+		api.getListeners().values().forEach(value -> value.forEach(list -> System.out.println(list.toString())));
 		return api;
 	}
 }
