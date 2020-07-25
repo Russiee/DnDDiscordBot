@@ -17,12 +17,7 @@
       "command": null,
       "linuxParameters": null,
       "cpu": 0,
-      "environment": [
-        {
-          "name": "TOKEN",
-          "value": "NzM1ODUyNDA4NTYzMDQwMzM2.Xxmciw.C1rC1Yt5seO5xost1xU9sPKHMW0"
-        }
-      ],
+      "environment": [],
       "resourceRequirements": null,
       "ulimits": null,
       "dnsServers": null,
@@ -60,7 +55,7 @@
   "compatibilities": [
     "EC2"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:eu-west-1:206890211931:task-definition/dnddiscordbot:1",
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-1:206890211931:task-definition/dnddiscordbot:2",
   "family": "dnddiscordbot",
   "requiresAttributes": [
     {
@@ -82,7 +77,7 @@
   ],
   "networkMode": "bridge",
   "cpu": null,
-  "revision": 1,
+  "revision": 2,
   "status": "ACTIVE",
   "inferenceAccelerators": null,
   "proxyConfiguration": null,
