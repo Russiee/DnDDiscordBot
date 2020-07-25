@@ -58,7 +58,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: 206890211931.dkr.ecr.eu-west-1.amazonaws.com/dnddiscordbot
+        ECR_REPOSITORY: dnddiscordbot
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
