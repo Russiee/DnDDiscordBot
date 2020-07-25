@@ -24,8 +24,7 @@
 #    and best practices on handling the access key credentials.
 
 on:
-  release:
-    types: [created]
+  push
 
 name: Deploy to Amazon ECS
 
@@ -42,7 +41,7 @@ jobs:
       with:
         java-version: 11.0.3
     - name: Build with Maven
-      run: mvn -B package -Pprod --file pom.xml
+      run: mvn -B package -DTOKEN=${{ secrets.TOKEN }} --file pom.xml
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -59,7 +58,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: 206890211931.dkr.ecr.eu-west-1.amazonaws.com/dnddiscordbot
+        ECR_REPOSITORY: dnddiscordbot
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
@@ -74,7 +73,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
-        container-name: dnd-discord-bot
+        container-name: dnddiscordbot-container
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
@@ -82,5 +81,5 @@ jobs:
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: dnd-discord-bot
-        cluster: arn:aws:ecs:eu-west-1:206890211931:cluster/discord-bot
+        cluster: arn:aws:ecs:eu-west-1:206890211931:cluster/default
         wait-for-service-stability: true
