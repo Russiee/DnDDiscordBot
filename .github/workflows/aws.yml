@@ -81,5 +81,5 @@ jobs:
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: dnd-discord-bot
-        cluster: arn:aws:ecs:eu-west-1:206890211931:cluster/discord-bot
+        cluster: arn:aws:ecs:eu-west-1:206890211931:cluster/default
         wait-for-service-stability: true
