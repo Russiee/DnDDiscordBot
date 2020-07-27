@@ -34,6 +34,10 @@ public class HandoutListenerImpl implements HandoutListener, MessageCreateListen
         Message message = messageCreateEvent.getMessage();
         String messageContent = message.getContent().trim();
 
+        if (messageCreateEvent.getMessageAuthor().isBotUser()) {
+            return;
+        }
+
         if (Pattern.matches(ADD_HANDOUT_PATTERN.pattern(), messageContent)) {
             Matcher matcher = ADD_HANDOUT_PATTERN.matcher(messageContent);
             List<String> list = new ArrayList<>();
