@@ -47,6 +47,7 @@ public class HandoutListenerImpl implements HandoutListener, MessageCreateListen
             String url = list.get(2);
             LOGGER.info("Creating handout with name " + name + " and url " + url);
             handoutService.saveHandout(name, url);
+            messageCreateEvent.getChannel().sendMessage("Successfully saved new handout: " + name);
         } else if (Pattern.matches(GET_HANDOUT_PATTERN.pattern(), messageContent)) {
             Matcher matcher = GET_HANDOUT_PATTERN.matcher(messageContent);
             List<String> list = new ArrayList<>();
