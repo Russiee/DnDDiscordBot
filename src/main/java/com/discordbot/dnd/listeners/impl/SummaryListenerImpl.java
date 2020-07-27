@@ -14,6 +14,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class SummaryListenerImpl implements SummaryListener, MessageCreateListener {
@@ -21,6 +25,7 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
     private static final String APPEND_SUMMARY = "!summary append";
     private static final String RM_LINE_SUMMARY = "!summary remove line";
     private static final String SUMMARY_FILE = "data/summary.txt";
+    private static final String INDEX_ARG_REGEX = "-i\\s*(\\d+)";
 
     @Value("classpath:data/summary.txt")
     private Resource resourceFile;
@@ -68,10 +73,22 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
             String toAppend = event.getMessage().getContent().replace(APPEND_SUMMARY, "").trim();
             S3Object summary = s3Service.getDocument(SUMMARY_FILE);
             String summaryContent = IOUtils.toString(summary.getObjectContent());
-            String summaryToAppend = summaryContent + "\n" + toAppend;
-            s3Service.uploadDocument(SUMMARY_FILE, summaryToAppend);
-            event.getChannel()
-                    .sendMessage("Appended: " + toAppend);
+            Integer appendIndex = getIndexArgIfPresent(toAppend);
+            if (appendIndex != null) {
+                toAppend = toAppend.replaceAll(INDEX_ARG_REGEX, "").trim();
+                String[] summaryLines = summaryContent.split("\n");
+                ArrayList<String> summaryArrayList = new ArrayList(Arrays.asList(summaryLines));
+                summaryArrayList.add(appendIndex, toAppend);
+                String summaryToUpload = String.join("\n", summaryArrayList);
+                s3Service.uploadDocument(SUMMARY_FILE, summaryToUpload);
+                event.getChannel()
+                        .sendMessage(String.format("Appended: '%s' at index '%o'", toAppend, appendIndex));
+            } else {
+                String summaryToAppend = summaryContent + "\n" + toAppend;
+                s3Service.uploadDocument(SUMMARY_FILE, summaryToAppend);
+                event.getChannel()
+                        .sendMessage("Appended: " + toAppend);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,6 +116,16 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
                     .sendMessage("Removed previous line in summary. Use !summary list to view changes");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private Integer getIndexArgIfPresent(String payload) {
+        Pattern pattern = Pattern.compile(INDEX_ARG_REGEX);
+        Matcher matcher = pattern.matcher(payload);
+        if (matcher.find()) {
+            return new Integer(matcher.group(1));
+        } else {
+            return null;
         }
     }
 
