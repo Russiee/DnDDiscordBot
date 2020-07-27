@@ -157,6 +157,8 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
                 .appendNewLine()
                 .append("Will remove the last line from the summary. Use sparingly.")
                 .appendNewLine()
+                .append("Use the '-i' switch to specify a zero-based index to append/remove to/from the summary.")
+                .appendCode("java", "!summary remove line -i 0")
                 .send(event.getChannel());
     }
 }
