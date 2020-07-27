@@ -7,6 +7,7 @@ import javassist.NotFoundException;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class HandoutListenerImpl implements HandoutListener {
+public class HandoutListenerImpl implements HandoutListener, MessageCreateListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandoutListenerImpl.class);
     private static final Pattern ADD_HANDOUT_PATTERN = Pattern.compile("(!handout) (\\w+) (.+)");
     private static final Pattern GET_HANDOUT_PATTERN = Pattern.compile("(!handout) \\b(\\S+)$");
