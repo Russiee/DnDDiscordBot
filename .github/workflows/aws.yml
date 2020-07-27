@@ -67,7 +67,7 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
         --build-arg TOKEN_ARG=${{ secrets.TOKEN }} 
         --build-arg DB_PASS_ARG=${{ secrets.DB_PASS }}
-        --build.arg MYSQL_HOST_ARG=${{ secrets.MYSQL_HOST }}
+        --build-arg MYSQL_HOST_ARG=${{ secrets.MYSQL_HOST }}
         .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
