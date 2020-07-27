@@ -77,7 +77,7 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
             if (appendIndex != null) {
                 toAppend = toAppend.replaceAll(INDEX_ARG_REGEX, "").trim();
                 String[] summaryLines = summaryContent.split("\n");
-                ArrayList<String> summaryArrayList = new ArrayList(Arrays.asList(summaryLines));
+                ArrayList summaryArrayList = new ArrayList(Arrays.asList(summaryLines));
                 summaryArrayList.add(appendIndex, toAppend);
                 String summaryToUpload = String.join("\n", summaryArrayList);
                 s3Service.uploadDocument(SUMMARY_FILE, summaryToUpload);
@@ -98,19 +98,28 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
         try {
             S3Object summary = s3Service.getDocument(SUMMARY_FILE);
             String summaryContent = IOUtils.toString(summary.getObjectContent());
-            StringBuilder sb = new StringBuilder();
-            sb.append(summaryContent);
-            if (sb.length() > 0) {
-                int last, prev = sb.length() - 1;
-                while ((last = sb.lastIndexOf("\n", prev)) == prev) {
-                    prev = last - 1;
-                }
-                if (last >= 0) {
-                    sb.delete(last, sb.length());
-                }
+//            StringBuilder sb = new StringBuilder();
+//            sb.append(summaryContent);
+//            if (sb.length() > 0) {
+//                int last, prev = sb.length() - 1;
+//                while ((last = sb.lastIndexOf("\n", prev)) == prev) {
+//                    prev = last - 1;
+//                }
+//                if (last >= 0) {
+//                    sb.delete(last, sb.length());
+//                }
+//            }
+//
+//            String summaryToUpload = sb.toString();
+            String[] summaryLines = summaryContent.split("\n");
+            ArrayList summaryArrayList = new ArrayList(Arrays.asList(summaryLines));
+            Integer removeIndex = getIndexArgIfPresent(event.getMessage().getContent());
+            if (removeIndex != null) {
+                summaryArrayList.remove(removeIndex.intValue());
+            } else {
+                summaryArrayList.remove(summaryLines.length - 1);
             }
-
-            String summaryToUpload = sb.toString();
+            String summaryToUpload = String.join("\n", summaryArrayList);
             s3Service.uploadDocument(SUMMARY_FILE, summaryToUpload);
             event.getChannel()
                     .sendMessage("Removed previous line in summary. Use !summary list to view changes");
