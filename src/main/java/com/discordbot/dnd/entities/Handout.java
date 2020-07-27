@@ -18,6 +18,9 @@ public class Handout {
         this.url = url;
     }
 
+    public Handout() {
+    }
+
     public String getName() {
         return name;
     }

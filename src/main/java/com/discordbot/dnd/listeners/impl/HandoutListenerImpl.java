@@ -42,13 +42,21 @@ public class HandoutListenerImpl implements HandoutListener, MessageCreateListen
                     list.add(matcher.group(i));
                 }
             }
+            list.forEach(LOGGER::info);
             String name = list.get(1);
             String url = list.get(2);
             LOGGER.info("Creating handout with name " + name + " and url " + url);
             handoutService.saveHandout(name, url);
         } else if (Pattern.matches(GET_HANDOUT_PATTERN.pattern(), messageContent)) {
             Matcher matcher = GET_HANDOUT_PATTERN.matcher(messageContent);
-            String name = matcher.group(1);
+            List<String> list = new ArrayList<>();
+            while (matcher.find()) {
+                for (int i = 1; i <= matcher.groupCount(); i++) {
+                    list.add(matcher.group(i));
+                }
+            }
+            list.forEach(LOGGER::info);
+            String name = list.get(1);
             try {
                 Handout handout = handoutService.getHandoutByName(name);
                 MessageBuilder builder = new MessageBuilder()
