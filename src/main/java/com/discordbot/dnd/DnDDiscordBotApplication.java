@@ -1,5 +1,6 @@
 package com.discordbot.dnd;
 
+import com.discordbot.dnd.listeners.HandoutListener;
 import com.discordbot.dnd.listeners.SummaryListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -23,6 +24,9 @@ public class DnDDiscordBotApplication {
 	private SummaryListener summaryListener;
 
 	@Autowired
+	private HandoutListener handoutListener;
+
+	@Autowired
 	private Environment env;
 
 	@Bean
@@ -33,6 +37,7 @@ public class DnDDiscordBotApplication {
 		DiscordApiBuilder builder = new DiscordApiBuilder().setToken(token);
 		DiscordApi api = builder.login().join();
 		api.addListener(summaryListener);
+		api.addListener(handoutListener);
 		api.getListeners().values().forEach(value -> value.forEach(list -> System.out.println(list.toString())));
 		return api;
 	}
