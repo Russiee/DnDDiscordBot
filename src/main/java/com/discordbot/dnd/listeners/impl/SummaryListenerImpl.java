@@ -8,29 +8,28 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
 public class SummaryListenerImpl implements SummaryListener, MessageCreateListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SummaryListenerImpl.class);
+
     private static final String LIST_SUMMARY = "!summary list";
     private static final String APPEND_SUMMARY = "!summary append";
     private static final String RM_LINE_SUMMARY = "!summary remove line";
     private static final String SUMMARY_FILE = "data/summary.txt";
-
-    @Value("classpath:data/summary.txt")
-    private Resource resourceFile;
 
     @Autowired
     private S3Service s3Service;
 
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
-        System.out.println("receivedMessage from " +
+        LOGGER.info("receivedMessage from " +
                 messageCreateEvent.getMessageAuthor() +
                 " from channel " +
                 messageCreateEvent.getChannel());
