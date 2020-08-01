@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @Component
 public class HandoutListenerImpl implements HandoutListener, MessageCreateListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandoutListenerImpl.class);
-    private static final Pattern ADD_HANDOUT_PATTERN = Pattern.compile("(!handout) (\\w+) (.+)");
+    private static final Pattern ADD_HANDOUT_PATTERN = Pattern.compile("(!handout) (\\S+) (.+)");
     private static final Pattern GET_HANDOUT_PATTERN = Pattern.compile("(!handout) \\b(\\S+)$");
 
     @Autowired
