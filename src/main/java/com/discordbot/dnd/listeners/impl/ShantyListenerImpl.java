@@ -33,6 +33,9 @@ public class ShantyListenerImpl implements ShantyListener {
                 while ((line = reader.readLine()) != null){
                     if(numOfLines == randNum) {
                         line = line.replaceAll("[\\\\][n]", "\n");
+                        if (messageContent.contains("-kuruku")) {
+                            line = line.toUpperCase();
+                        }    
                         messageCreateEvent.getChannel()
                                 .sendMessage(line);
                     }
