@@ -1,6 +1,7 @@
 package com.discordbot.dnd;
 
 import com.discordbot.dnd.listeners.HandoutListener;
+import com.discordbot.dnd.listeners.ShantyListener;
 import com.discordbot.dnd.listeners.SummaryListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -27,6 +28,9 @@ public class DnDDiscordBotApplication {
 	private HandoutListener handoutListener;
 
 	@Autowired
+	private ShantyListener shantyListener;
+
+	@Autowired
 	private Environment env;
 
 	@Bean
@@ -34,11 +38,20 @@ public class DnDDiscordBotApplication {
 	public DiscordApi discordApi() {
 		System.out.println("Initialising api");
 		String token = env.getProperty("TOKEN");
-		DiscordApiBuilder builder = new DiscordApiBuilder().setToken(token);
+		System.out.println(token);
+		DiscordApiBuilder builder = new DiscordApiBuilder().setToken(token).setAllNonPrivilegedIntents();
 		DiscordApi api = builder.login().join();
+		System.out.println("Initialising listeners");
 		api.addListener(summaryListener);
 		api.addListener(handoutListener);
+		api.addListener(shantyListener);
 		api.getListeners().values().forEach(value -> value.forEach(list -> System.out.println(list.toString())));
+		System.out.println("Initiated");
+		api.addMessageCreateListener(event -> {
+			if (event.getMessageContent().equalsIgnoreCase(".ping")) {
+				event.getChannel().sendMessage("Pong!");
+			}
+		});
 		return api;
 	}
 }
