@@ -2,11 +2,14 @@ package com.discordbot.dnd.listeners.impl;
 
 import com.discordbot.dnd.listeners.ShantyListener;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.StringWriter;
@@ -35,9 +38,18 @@ public class ShantyListenerImpl implements ShantyListener {
                         line = line.replaceAll("[\\\\][n]", "\n");
                         if (messageContent.contains("-kuruku")) {
                             line = line.toUpperCase();
-                        }    
-                        messageCreateEvent.getChannel()
-                                .sendMessage(line);
+                        }
+                        int red = (int) Math.floor(Math.random() * 255);
+                        int blue = (int) Math.floor(Math.random() * 255);
+                        int green = (int) Math.floor(Math.random() * 255);
+
+                        new MessageBuilder()
+                                .setEmbed(new EmbedBuilder()
+                                        .setDescription(line)
+                                        .setColor(new Color(red, green, blue))
+                                        .setAuthor(messageCreateEvent.getMessageAuthor()))
+                                .send(messageCreateEvent.getChannel());
+                        
                     }
                     numOfLines = numOfLines+1;
                 }
