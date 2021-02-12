@@ -11,9 +11,13 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -28,6 +32,9 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
     private static final String RM_LINE_SUMMARY = "!summary remove line";
     private static final String SUMMARY_FILE = "data/summary.txt";
     private static final String INDEX_ARG_REGEX = "-i\\s*(\\d+)";
+
+    @Value("classpath:data/summary.txt")
+    Resource resourceFile;
 
     @Autowired
     private S3Service s3Service;
@@ -95,8 +102,7 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
 
     private void removeLineSummary(MessageCreateEvent event) {
         try {
-            S3Object summary = s3Service.getDocument(SUMMARY_FILE);
-            String summaryContent = IOUtils.toString(summary.getObjectContent());
+            String summaryContent = IOUtils.toString(resourceFile.getInputStream());
 //            StringBuilder sb = new StringBuilder();
 //            sb.append(summaryContent);
 //            if (sb.length() > 0) {
