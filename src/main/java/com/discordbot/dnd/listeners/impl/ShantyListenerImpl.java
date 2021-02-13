@@ -49,7 +49,7 @@ public class ShantyListenerImpl implements ShantyListener {
                                         .setColor(new Color(red, green, blue))
                                         .setAuthor(messageCreateEvent.getMessageAuthor()))
                                 .send(messageCreateEvent.getChannel());
-                        
+
                     }
                     numOfLines = numOfLines+1;
                 }
