@@ -1,9 +1,6 @@
 package com.discordbot.dnd;
 
-import com.discordbot.dnd.listeners.HandoutListener;
-import com.discordbot.dnd.listeners.PirateRateListener;
-import com.discordbot.dnd.listeners.ShantyListener;
-import com.discordbot.dnd.listeners.SummaryListener;
+import com.discordbot.dnd.listeners.*;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,12 @@ public class DnDDiscordBotApplication {
 	private PirateRateListener pirateRateListener;
 
 	@Autowired
+	private PirateListener pirateListener;
+
+	@Autowired
+	private InventoryListener inventoryListener;
+
+	@Autowired
 	private Environment env;
 
 	@Bean
@@ -50,6 +53,8 @@ public class DnDDiscordBotApplication {
 		api.addListener(handoutListener);
 		api.addListener(shantyListener);
 		api.addListener(pirateRateListener);
+		api.addListener(inventoryListener);
+		api.addListener(pirateListener);
 		api.getListeners().values().forEach(value -> value.forEach(list -> System.out.println(list.toString())));
 		System.out.println("Initiated");
 		api.addMessageCreateListener(event -> {
