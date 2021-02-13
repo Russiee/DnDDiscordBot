@@ -28,4 +28,9 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setPirate(pirate);
         return inventoryRepository.save(inventory);
     }
+
+    @Override
+    public Inventory update(Inventory inventory) {
+        return inventoryRepository.saveAndFlush(inventory);
+    }
 }

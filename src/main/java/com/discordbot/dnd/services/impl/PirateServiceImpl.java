@@ -36,4 +36,10 @@ public class PirateServiceImpl implements PirateService {
         return pirateRepository.save(pirate);
     }
 
+    @Override
+    public Pirate update(Pirate pirate) {
+        return pirateRepository.saveAndFlush(pirate);
+    }
+
+
 }

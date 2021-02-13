@@ -8,4 +8,6 @@ public interface InventoryService {
     Inventory getInventoryByPirateId(String pirateId);
 
     Inventory create(Pirate pirate);
+
+    Inventory update(Inventory inventory);
 }

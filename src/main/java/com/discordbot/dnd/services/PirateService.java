@@ -7,4 +7,6 @@ public interface PirateService {
     Pirate getPirate(String id);
 
     Pirate create(String id, String name);
+
+    Pirate update(Pirate pirate);
 }
