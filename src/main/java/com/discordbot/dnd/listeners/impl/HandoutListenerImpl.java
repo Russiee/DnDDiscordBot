@@ -3,9 +3,11 @@ package com.discordbot.dnd.listeners.impl;
 import com.discordbot.dnd.entities.Handout;
 import com.discordbot.dnd.listeners.HandoutListener;
 import com.discordbot.dnd.services.HandoutService;
+import com.discordbot.dnd.services.MessagingService;
 import javassist.NotFoundException;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.slf4j.Logger;
@@ -29,6 +31,9 @@ public class HandoutListenerImpl implements HandoutListener, MessageCreateListen
     @Autowired
     private HandoutService handoutService;
 
+    @Autowired
+    private MessagingService messagingService;
+
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
         Message message = messageCreateEvent.getMessage();
@@ -51,7 +56,7 @@ public class HandoutListenerImpl implements HandoutListener, MessageCreateListen
             String url = list.get(2);
             LOGGER.info("Creating handout with name " + name + " and url " + url);
             handoutService.saveHandout(name, url);
-            messageCreateEvent.getChannel().sendMessage("Successfully saved new handout: " + name);
+            messagingService.sendMessage(messageCreateEvent, "Work", "Successfully saved new handout: " + name, null);
         } else if (Pattern.matches(GET_HANDOUT_PATTERN.pattern(), messageContent)) {
             Matcher matcher = GET_HANDOUT_PATTERN.matcher(messageContent);
             List<String> list = new ArrayList<>();
@@ -72,27 +77,25 @@ public class HandoutListenerImpl implements HandoutListener, MessageCreateListen
                         .addAttachment(new URL(handout.getUrl()));
                 builder.send(messageCreateEvent.getChannel());
             } catch (NotFoundException | MalformedURLException e) {
-                messageCreateEvent.getChannel()
-                        .sendMessage("Could not find Handout with name " + name);
+                messagingService.sendMessage(messageCreateEvent, "Work", "Could not find Handout with name " + name, null);
             }
         } else if (messageContent.contains("!handout")) {
-            MessageBuilder messageBuilder = new MessageBuilder()
-                    .append("Oops! It looks like ")
-                    .append(messageCreateEvent.getMessageAuthor().getDisplayName())
-                    .append(" is having trouble using handouts")
-                    .appendNewLine()
-                    .appendCode("java", "!handout [name] [url]")
-                    .appendNewLine()
-                    .append("Use this syntax to upload a new handout. The name is required to be unique and not used")
-                    .appendNewLine()
-                    .append("If the name already exists as a handout the url will be overridden")
-                    .appendNewLine()
-                    .append("and the url must link to the handout you want to display.")
-                    .appendNewLine()
-                    .appendCode("java", "!handout [name]")
-                    .appendNewLine()
-                    .append("Without the url, the command will be used to display the url of the handout itself.");
-            messageBuilder.send(messageCreateEvent.getChannel());
+            String description = "Oops! It looks like " +
+                    messageCreateEvent.getMessageAuthor().getDisplayName() +
+                    " is having trouble using handouts" +
+                    "\n" +
+                    "`!handout [name] [url]`" +
+                    "\n" +
+                    "Use this syntax to upload a new handout. The name is required to be unique and not used" +
+                    "\n" +
+                    "If the name already exists as a handout the url will be overridden" +
+                    "\n" +
+                    "and the url must link to the handout you want to display." +
+                    "\n" +
+                    "`!handout [name]`" +
+                    "\n" +
+                    "Without the url, the command will be used to display the url of the handout itself.";
+            messagingService.sendMessage(messageCreateEvent, "Handout", description, null);
         }
     }
 }

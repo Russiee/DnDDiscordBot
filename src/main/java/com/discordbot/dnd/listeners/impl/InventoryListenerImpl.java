@@ -4,6 +4,7 @@ import com.discordbot.dnd.entities.Inventory;
 import com.discordbot.dnd.entities.Pirate;
 import com.discordbot.dnd.listeners.InventoryListener;
 import com.discordbot.dnd.services.InventoryService;
+import com.discordbot.dnd.services.MessagingService;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -17,6 +18,9 @@ public class InventoryListenerImpl implements InventoryListener {
     @Autowired
     private InventoryService inventoryService;
 
+    @Autowired
+    private MessagingService messagingService;
+
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
         Message message = messageCreateEvent.getMessage();
@@ -25,11 +29,8 @@ public class InventoryListenerImpl implements InventoryListener {
             return;
         } else if (messageContent.startsWith("!inventory")) {
             Inventory inventory = inventoryService.getInventoryByPirateId(String.valueOf(message.getAuthor().getId()));
-            new MessageBuilder().setEmbed(new EmbedBuilder()
-                    .setTitle("Inventory")
-                    .setDescription("You've " + inventory.getGold() + " gold!")
-                    .setAuthor(message.getAuthor()))
-                    .send(messageCreateEvent.getChannel());
+            String description = "You have " + inventory.getGold() + " gold!";
+            messagingService.sendMessage(messageCreateEvent, "Inventory", description, null);
         }
     }
 }

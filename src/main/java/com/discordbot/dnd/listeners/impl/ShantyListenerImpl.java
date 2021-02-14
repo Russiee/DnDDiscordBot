@@ -2,6 +2,7 @@ package com.discordbot.dnd.listeners.impl;
 
 import com.discordbot.dnd.entities.Shanty;
 import com.discordbot.dnd.listeners.ShantyListener;
+import com.discordbot.dnd.services.MessagingService;
 import com.discordbot.dnd.services.ShantyService;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -23,6 +24,9 @@ public class ShantyListenerImpl implements ShantyListener {
     @Autowired
     private ShantyService shantyService;
 
+    @Autowired
+    private MessagingService messagingService;
+
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
         Message message = messageCreateEvent.getMessage();
@@ -35,19 +39,8 @@ public class ShantyListenerImpl implements ShantyListener {
             if (messageContent.contains("-kuruku")) {
                 shantyContent = shantyContent.toUpperCase();
             }
-            int red = (int) Math.floor(Math.random() * 255);
-            int blue = (int) Math.floor(Math.random() * 255);
-            int green = (int) Math.floor(Math.random() * 255);
 
-            new MessageBuilder()
-                    .setEmbed(new EmbedBuilder()
-                            .setTitle(shanty.getTitle())
-                            .setDescription(shantyContent)
-                            .setColor(new Color(red, green, blue))
-                            .setAuthor(messageCreateEvent.getMessageAuthor()))
-                    .send(messageCreateEvent.getChannel());
-
-
+            messagingService.sendMessage(messageCreateEvent, shanty.getTitle(), shantyContent, null);
         }
     }
 }

@@ -65,14 +65,14 @@ public class WorkServiceImpl implements WorkService {
             Work work = workRepository.getWorkByWorkType(workChoice);
             WorkLog workLog = workLogService.getWork(id);
             if(workLog == null) {
-                workLog = workLogService.create(id, work);
+                workLogService.create(id, work);
                 return work;
             } else if (DateUtils.addMinutes(workLog.getDate(), workLog.getWork().getTimeout()).before(new Date())) {
+                workLog.setWork(work);
                 workLog.setDate(new Date());
                 long currentGold = workLog.getPirate().getInventory().getGold();
                 currentGold = currentGold + workLog.getWork().getPayout();
                 workLog.getPirate().getInventory().setGold(currentGold);
-                workLog.setWork(work);
                 inventoryService.update(workLog.getPirate().getInventory());
                 pirateService.update(workLog.getPirate());
                 workLogService.update(workLog);

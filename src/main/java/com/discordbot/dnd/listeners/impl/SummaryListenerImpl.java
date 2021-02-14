@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.discordbot.dnd.helpers.S3Service;
 import com.discordbot.dnd.listeners.SummaryListener;
+import com.discordbot.dnd.services.MessagingService;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -39,6 +40,9 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
     @Autowired
     private S3Service s3Service;
 
+    @Autowired
+    private MessagingService messagingService;
+
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
         LOGGER.info("receivedMessage from " +
@@ -67,8 +71,7 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
         try {
             S3Object summary = s3Service.getDocument(SUMMARY_FILE);
             String summaryContent = IOUtils.toString(summary.getObjectContent());
-            event.getChannel()
-                    .sendMessage(summaryContent);
+            messagingService.sendMessage(event, "Summary", summaryContent, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,13 +90,11 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
                 summaryArrayList.add(appendIndex, toAppend);
                 String summaryToUpload = String.join("\n", summaryArrayList);
                 s3Service.uploadDocument(SUMMARY_FILE, summaryToUpload);
-                event.getChannel()
-                        .sendMessage(String.format("Appended: '%s' at index '%o'", toAppend, appendIndex));
+                messagingService.sendMessage(event, "Summary", String.format("Appended: '%s' at index '%o'", toAppend, appendIndex), null);
             } else {
                 String summaryToAppend = summaryContent + "\n" + toAppend;
                 s3Service.uploadDocument(SUMMARY_FILE, summaryToAppend);
-                event.getChannel()
-                        .sendMessage("Appended: " + toAppend);
+                messagingService.sendMessage(event, "Summary", String.format("Appended: '%s'", toAppend), null);
             }
         } catch (IOException e) {
             e.printStackTrace();

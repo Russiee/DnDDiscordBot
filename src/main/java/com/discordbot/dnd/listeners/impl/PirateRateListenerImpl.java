@@ -1,9 +1,11 @@
 package com.discordbot.dnd.listeners.impl;
 
 import com.discordbot.dnd.listeners.PirateRateListener;
+import com.discordbot.dnd.services.MessagingService;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -14,6 +16,9 @@ public class PirateRateListenerImpl implements PirateRateListener {
     private static final String PIRATE_EMOJI = "\uD83C\uDFF4\u200D";
     private static final String SKULL_CROSSBONES = "☠️";
 
+    @Autowired
+    private MessagingService messagingService;
+
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
         if (messageCreateEvent.getMessageAuthor().isBotUser()) {
@@ -22,9 +27,6 @@ public class PirateRateListenerImpl implements PirateRateListener {
             int pirateRate = (int) Math.floor(Math.random() * 100) + 1;
             String title = "";
             String message = "";
-            int red = (int) Math.floor(Math.random() * 255);
-            int blue = (int) Math.floor(Math.random() * 255);
-            int green = (int) Math.floor(Math.random() * 255);
             if (pirateRate <= 1) {
                 title = "Stowaway!!";
                 message = "Throw him overboard! They're **" + pirateRate + "%** pirate!!";
@@ -44,13 +46,7 @@ public class PirateRateListenerImpl implements PirateRateListener {
                 title = "Ching Shih";
                 message = "The fiercest **" + pirateRate + "%** pirate to ever sail the seven seas!";
             }
-            new MessageBuilder().setEmbed(new EmbedBuilder()
-                    .setAuthor(messageCreateEvent.getMessageAuthor())
-                    .setTitle(title)
-                    .setDescription(message)
-                    .setFooter(PIRATE_EMOJI + SKULL_CROSSBONES)
-                    .setColor(new Color(red, green, blue)))
-                    .send(messageCreateEvent.getChannel());
+            messagingService.sendMessage(messageCreateEvent, title, message, PIRATE_EMOJI + SKULL_CROSSBONES);
         }
     }
 }
