@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,10 +73,34 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
         try {
             S3Object summary = s3Service.getDocument(SUMMARY_FILE);
             String summaryContent = IOUtils.toString(summary.getObjectContent());
-            messagingService.sendMessage(event, "Summary", summaryContent, null);
+            List<String> lines = new LinkedList(Arrays.asList(summaryContent.split("\\r?\\n")));
+            while(lines.size() > 0) {
+                if(lines.size() < 20) {
+                    String description = String.join("\n", lines);
+                    messagingService.sendMessage(event, "Summary", description, null);
+                    lines.clear();
+                } else {
+                    List<String> remainingLines = new LinkedList(lines.subList(0, 20));
+                    String description = String.join("\n", remainingLines);
+                    lines.removeAll(remainingLines);
+                    messagingService.sendMessage(event, "Summary", description, null);
+
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String splitLength(String string, int length) {
+        if(string.length() < length) {
+            String remainingString = string;
+            string = "";
+            return remainingString;
+        }
+        String substring = string.substring(0, length);
+        string = string.substring(length+1, string.length());
+        return substring;
     }
 
     private void appendSummary(MessageCreateEvent event) {
