@@ -42,7 +42,7 @@ public class WorkListenerImpl implements WorkListener {
                 try {
                     Work workDone = workService.work(message.getAuthor().getIdAsString(), null);
                     String description = "Great job! You've earned " + workDone.getPayout() + " gold for " + workDone.getTimeout() + " minutes of work!";
-                    messagingService.sendMessage(messageCreateEvent, "Work", description, null);
+                    messagingService.sendMessage(messageCreateEvent, "Work", description, workDone.getWorkType());
                 } catch (WorkedTooRecentlyException e) {
                     messagingService.sendMessage(messageCreateEvent,
                             "Work",
@@ -68,7 +68,7 @@ public class WorkListenerImpl implements WorkListener {
             try {
                 Work workDone = workService.work(message.getAuthor().getIdAsString(), workChoice);
                 String description = "Great job! You've earned " + workDone.getPayout() + " gold for " + workDone.getTimeout() + " minutes of work!";
-                messagingService.sendMessage(messageCreateEvent, "Work", description, null);
+                messagingService.sendMessage(messageCreateEvent, "Work", description, workDone.getWorkType());
             } catch (WorkedTooRecentlyException e) {
                 messagingService.sendMessage(messageCreateEvent,
                         "Work",
