@@ -77,13 +77,13 @@ public class SummaryListenerImpl implements SummaryListener, MessageCreateListen
             while(lines.size() > 0) {
                 if(lines.size() < 20) {
                     String description = String.join("\n", lines);
-                    messagingService.sendMessage(event, "Summary", description, null);
+                    messagingService.sendMessage(event, "Summary", description, null, true);
                     lines.clear();
                 } else {
                     List<String> remainingLines = new LinkedList(lines.subList(0, 20));
                     String description = String.join("\n", remainingLines);
                     lines.removeAll(remainingLines);
-                    messagingService.sendMessage(event, "Summary", description, null);
+                    messagingService.sendMessage(event, "Summary", description, null, true);
 
                 }
             }

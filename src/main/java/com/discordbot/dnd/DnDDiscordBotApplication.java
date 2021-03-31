@@ -47,6 +47,9 @@ public class DnDDiscordBotApplication {
 	private GiftListener giftListener;
 
 	@Autowired
+	private PlunderListener plunderListener;
+
+	@Autowired
 	private Environment env;
 
 	@Bean
@@ -67,6 +70,7 @@ public class DnDDiscordBotApplication {
 		api.addListener(workListener);
 		api.addListener(rouletteListener);
 		api.addListener(giftListener);
+		api.addListener(plunderListener);
 		api.getListeners().values().forEach(value -> value.forEach(list -> System.out.println(list.toString())));
 		System.out.println("Initiated");
 		api.addMessageCreateListener(event -> {
