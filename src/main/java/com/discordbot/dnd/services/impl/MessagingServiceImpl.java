@@ -1,5 +1,6 @@
-package com.discordbot.dnd.services;
+package com.discordbot.dnd.services.impl;
 
+import com.discordbot.dnd.services.MessagingService;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -15,6 +16,11 @@ public class MessagingServiceImpl implements MessagingService {
         int red = (int) Math.floor(Math.random() * 255);
         int blue = (int) Math.floor(Math.random() * 255);
         int green = (int) Math.floor(Math.random() * 255);
+
+        if("kuruku".equalsIgnoreCase(event.getMessageAuthor().getDisplayName())) {
+            title = title.toUpperCase();
+            description = description.toUpperCase();
+        }
 
         new MessageBuilder().setEmbed(new EmbedBuilder()
                 .setAuthor(event.getMessageAuthor())

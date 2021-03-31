@@ -27,7 +27,7 @@ public class PirateRateListenerImpl implements PirateRateListener {
             int pirateRate = (int) Math.floor(Math.random() * 100) + 1;
             String title = "";
             String message = "";
-            if (pirateRate <= 1) {
+            if (pirateRate <= 2) {
                 title = "Stowaway!!";
                 message = "Throw him overboard! They're **" + pirateRate + "%** pirate!!";
             } else if (pirateRate <= 10) {
