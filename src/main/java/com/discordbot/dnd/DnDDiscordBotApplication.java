@@ -58,7 +58,7 @@ public class DnDDiscordBotApplication {
 		System.out.println("Initialising api");
 		String token = env.getProperty("TOKEN");
 		System.out.println(token);
-		DiscordApiBuilder builder = new DiscordApiBuilder().setToken(token).setAllNonPrivilegedIntents();
+		DiscordApiBuilder builder = new DiscordApiBuilder().setToken(token).setAllIntents();
 		DiscordApi api = builder.login().join();
 		System.out.println("Initialising listeners");
 		api.addListener(summaryListener);
